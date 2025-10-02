@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Loans - Library Management System</title>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <header class="header">
+      <div class="container">
+        <div class="header-content">
+          <div class="logo">📚 Library Management</div>
+          <nav class="nav">
+            <a href="dashboard.html">Dashboard</a>
+            <a href="books.html">Browse Books</a>
+            <a href="my-loans.html" class="active">My Loans</a>
+            <a href="login.html" id="logout">Logout</a>
+          </nav>
+          <div class="user-info">
+            <div class="user-avatar">S</div>
+            <span>Student Name</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="main-content">
+      <div class="container">
+        <h1>My Loans</h1>
+        <p style="color: #666; margin-bottom: 2rem">
+          View and manage your borrowed books.
+        </p>
+
+        <!-- Loans Table -->
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title">Your Loans</h2>
+            <span style="color: #666"
+              >Total: <span id="total-loans"></span> loans</span
+            >
+          </div>
+
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Book Title</th>
+                <th>Author</th>
+                <th>Loan Date</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="cards">
+              <tr>
+                <td>
+                  <strong>JavaScript: The Good Parts</strong>
+                  <br />
+                  <small style="color: #666">ISBN: 9780596517748</small>
+                </td>
+                <td>Douglas Crockford</td>
+                <td>2025-09-07</td>
+                <td><span class="status status-active">Active</span></td>
+                <td>
+                  <button class="btn btn-success btn-sm">Return</button>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <strong>Clean Code</strong>
+                  <br />
+                  <small style="color: #666">ISBN: 9780132350884</small>
+                </td>
+                <td>Robert C. Martin</td>
+                <td>2025-09-05</td>
+                <td><span class="status status-active">Active</span></td>
+                <td>
+                  <button class="btn btn-success btn-sm">Return</button>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <strong>Atomic Habits</strong>
+                  <br />
+                  <small style="color: #666">ISBN: 9780735211292</small>
+                </td>
+                <td>James Clear</td>
+                <td>2025-08-20</td>
+                <td><span class="status status-returned">Returned</span></td>
+                <td>
+                  <button class="btn btn-secondary btn-sm" disabled>
+                    Returned
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Loan Statistics -->
+        <div class="grid grid-2">
+          <div class="card stat-card">
+            <div class="stat-number" id="Active-Loans">2</div>
+            <div class="stat-label">Active Loans</div>
+          </div>
+          <div class="card stat-card">
+            <div class="stat-number" id="Returned-Books">1</div>
+            <div class="stat-label">Returned Books</div>
+          </div>
+        </div>
+      </div>
+    </main>
+    <script src="index.js" defer></script>
+  </body>
+</html>

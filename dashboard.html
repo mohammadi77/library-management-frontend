@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Student Dashboard - Library Management System</title>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <header class="header">
+      <div class="container">
+        <div class="header-content">
+          <div class="logo">📚 Library Management</div>
+          <nav class="nav">
+            <a href="dashboard.html" class="active">Dashboard</a>
+            <a href="books.html">Browse Books</a>
+            <a href="my-loans.html">My Loans</a>
+            <a id="logout" href="login.html">Logout</a>
+          </nav>
+          <div class="user-info">
+            <div class="user-avatar" id="userAvatar">S</div>
+            <span id="userName">Student Name</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="main-content">
+      <div class="container">
+        <h1>Welcome back, <span id="studentName">Student Name</span>!</h1>
+        <p style="color: #666; margin-bottom: 2rem">
+          Manage your library account and explore our collection.
+        </p>
+
+        <!-- Statistics Cards -->
+        <div class="grid grid-2">
+          <div class="card stat-card">
+            <div class="stat-number" id="activeLoans">0</div>
+            <div class="stat-label">Active Loans</div>
+          </div>
+          <div class="card stat-card">
+            <div class="stat-number" id="availableBooks">0</div>
+            <div class="stat-label">Available Books</div>
+          </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title">Quick Actions</h2>
+          </div>
+          <div class="grid grid-2">
+            <a
+              href="books.html"
+              class="btn btn-primary"
+              style="text-align: center; padding: 2rem"
+            >
+              <h3>📖 Browse Books</h3>
+              <p>Explore our collection and find your next read</p>
+            </a>
+            <a
+              href="my-loans.html"
+              class="btn btn-success"
+              style="text-align: center; padding: 2rem"
+            >
+              <h3>📋 My Loans</h3>
+              <p>View and manage your current loans</p>
+            </a>
+          </div>
+        </div>
+      </div>
+    </main>
+    <script src="index.js" defer></script>
+  </body>
+</html>
