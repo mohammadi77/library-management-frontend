@@ -1,4 +1,3 @@
-const loading = true;
 const cache = {
   set(key, data, ttl = 0.5 * 60 * 1000) {
     const record = {
@@ -42,6 +41,17 @@ const storage = {
     }
   },
 };
+function showLoading() {
+  const loader = document.querySelector(".load");
+  if (!loader) return;
+  loader.style.display = "flex";
+
+  // فقط برای ۲ ثانیه نمایش بده
+  setTimeout(() => {
+    loader.style.display = "none";
+  }, 2000);
+}
+
 let message = "";
 function http(url, config) {
   return new Promise((resolve, reject) => {
@@ -57,13 +67,13 @@ function http(url, config) {
               if (ok) {
                 resolve(data);
               } else {
-                reject(new Error(data.error));
+                reject(new Error(data.message));
                 // reject(new Error(status));
               }
             })
             .catch(() => {
               //     reject(new Error("خطای پردازش JSON"));
-              reject(new Error(data.error));
+              reject(new Error(data.message));
             });
         } else {
           response
@@ -73,18 +83,18 @@ function http(url, config) {
                 resolve(text);
               } else {
                 // reject(new Error(status));
-                reject(new Error(text.error));
+                reject(new Error(text.message));
               }
             })
             .catch(() => {
               // reject(new Error("خطای پردازش متن"));
-              reject(new Error(text.error));
+              reject(new Error(text.message));
             });
         }
       })
       .catch((error) => {
         //  reject(new Error("خطای شبکه"));
-        reject(new Error(error.error));
+        reject(new Error(error.message));
       });
   });
 }
@@ -96,7 +106,7 @@ function getCookie(name) {
 }
 
 if (path.endsWith("login.html")) {
-  if (getCookie("JWT") == "") {
+  if (getCookie("JWT") === null || getCookie("JWT") === "") {
     document.getElementById("loginForm").addEventListener("submit", (e) => {
       e.preventDefault();
 
@@ -115,7 +125,13 @@ if (path.endsWith("login.html")) {
       )
         .then((response) => {
           const { token, data } = response;
-          document.cookie = `JWT=${token}; path=/`;
+
+          const expiryDays = 7; // تعداد روزهایی که JWT معتبر بماند
+          const expiryDate = new Date(
+            Date.now() + expiryDays * 24 * 60 * 60 * 1000
+          ).toUTCString();
+          document.cookie = `JWT=${token}; path=/; expires=${expiryDate}; Secure; SameSite=Strict`;
+
           storage.set("firstName", response.user.firstName);
           storage.set("userId", response.user.id);
 
@@ -135,7 +151,7 @@ function firstName() {
 }
 
 if (path.endsWith("dashboard.html")) {
-  if (getCookie("JWT") == null) {
+  if (getCookie("JWT") === null || getCookie("JWT") === "") {
     window.location.href = "login.html";
   } else {
     firstName();
@@ -168,7 +184,7 @@ if (path.endsWith("dashboard.html")) {
   }
 }
 if (path.endsWith("books.html")) {
-  if (getCookie("JWT") == null) {
+  if (getCookie("JWT") === null || getCookie("JWT") === "") {
     window.location.href = "login.html";
   } else {
     firstName();
@@ -176,7 +192,7 @@ if (path.endsWith("books.html")) {
   }
 }
 if (path.endsWith("my-loans.html")) {
-  if (getCookie("JWT") == null) {
+  if (getCookie("JWT") === null || getCookie("JWT") === "") {
     window.location.href = "login.html";
   } else {
     firstName();
@@ -184,11 +200,12 @@ if (path.endsWith("my-loans.html")) {
   }
 }
 if (path.endsWith("index.html")) {
-  if (getCookie("JWT") == null) {
+  if (getCookie("JWT") === null || getCookie("JWT") === "") {
     window.location.href = "login.html";
   }
 }
 function loadBooks() {
+  showLoading();
   const cachedBooks = cache.get("books");
   if (cachedBooks) {
     renderBooks(cachedBooks);
@@ -238,10 +255,10 @@ function borrowBook(bookid) {
     }),
   })
     .then((response) => {
-      loadBooks();
+      alert("تایید شد");
     })
     .catch((error) => {
-      alert(error);
+      alert(error.message);
     });
 }
 
@@ -375,14 +392,29 @@ function renderBooks(data) {
     const borrowBtn = card.querySelector(".brrow");
     const status = card.querySelector(".status");
     if (book.availableCopies === 0) {
-      borrowBtn.disabled = true;
       borrowBtn.innerText = "Not Available";
-      borrowBtn.disabled = true;
       status.classList.remove("status-available");
       status.classList.add("status-unavailable");
     }
     borrowBtn.addEventListener("click", () => {
-      borrowBook(book.id);
+      if (book.availableCopies === 0) {
+        const alert = document.createElement("div");
+        alert.classList.add("alert");
+        alert.style = `  position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        align-items: center;
+        justify-content: center;
+        display: flex;`;
+        alert.innerHTML = `
+    <p style=" background-color: aqua;">کتاب موجود نیست</p>
+    `;
+        document.body.appendChild(alert);
+        setTimeout(() => alert.remove(), 2000);
+        return;
+      } else borrowBook(book.id);
     });
   });
   document.getElementById("logout").addEventListener("click", function () {
