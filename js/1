@@ -46,6 +46,7 @@ function showLoading() {
   if (!loader) return;
   loader.style.display = "flex";
 
+  // فقط برای ۲ ثانیه نمایش بده
   setTimeout(() => {
     loader.style.display = "none";
   }, 2000);
@@ -59,14 +60,6 @@ function http(url, config) {
         const { ok, status, headers } = response;
         const contentType = headers.get("content-type");
         const isJson = contentType.includes("application/json");
-        if (status === 401) {
-          document.cookie =
-            "JWT=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
-          localStorage.clear();
-          alert("نشست شما منقضی شده است، لطفاً دوباره وارد شوید.");
-          window.location.href = "login.html";
-          return;
-        }
         if (isJson) {
           response
             .json()
@@ -158,14 +151,12 @@ function firstName() {
 }
 
 if (path.endsWith("dashboard.html")) {
-  showLoading();
-
   if (getCookie("JWT") === null || getCookie("JWT") === "") {
     window.location.href = "login.html";
   } else {
     firstName();
-    document.getElementById("studentName").innerText =
-      localStorage.getItem("firstName");
+    // document.getElementById("userName").innerText =
+    //   localStorage.getItem("firstName");
     let activeLoans = 0;
     let availableBooks = 0;
     http("https://karyar-library-management-system.liara.run/api/auth/me", {
@@ -195,19 +186,14 @@ if (path.endsWith("dashboard.html")) {
   }
 }
 if (path.endsWith("books.html")) {
-  showLoading();
-
   if (getCookie("JWT") === null || getCookie("JWT") === "") {
     window.location.href = "login.html";
   } else {
     firstName();
     loadBooks();
-    search_click();
   }
 }
 if (path.endsWith("my-loans.html")) {
-  showLoading();
-
   if (getCookie("JWT") === null || getCookie("JWT") === "") {
     window.location.href = "login.html";
   } else {
@@ -271,16 +257,7 @@ function borrowBook(bookid) {
     }),
   })
     .then((response) => {
-      const alert = document.createElement("div");
-      alert.classList.add("alert");
-      message_alert = "کتاب با موفقیت به لیست اضافه شد ";
-      alert.innerHTML = `
-       <div class="massage">
-        <p>${message_alert}</p>
-      </div>
-    </div>    `;
-      document.body.appendChild(alert);
-      setTimeout(() => alert.remove(), 2000);
+      alert("تایید شد");
     })
     .catch((error) => {
       alert(error.message);
@@ -365,16 +342,6 @@ function returnBook(loanId) {
     }
   )
     .then((response) => {
-      const alert = document.createElement("div");
-      alert.classList.add("alert");
-      message_alert = "کتاب  به کتابخانه داده شد";
-      alert.innerHTML = `
-       <div class="massage">
-        <p>${message_alert}</p>
-      </div>
-    </div>    `;
-      document.body.appendChild(alert);
-      setTimeout(() => alert.remove(), 2000);
       loadMyLoans();
     })
     .catch((error) => {
@@ -389,9 +356,7 @@ function renderBooks(data) {
   data.forEach((book) => {
     const card = document.createElement("div");
     card.classList.add("card");
-    card.style = ` display: flex;
-  flex-direction: column;
-  justify-content: space-evenly;`;
+
     card.innerHTML = `
     <div
       style="
@@ -437,12 +402,17 @@ function renderBooks(data) {
       if (book.availableCopies === 0) {
         const alert = document.createElement("div");
         alert.classList.add("alert");
-        message_alert = "کتاب موجود نیست";
+        alert.style = `  position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        align-items: center;
+        justify-content: center;
+        display: flex;`;
         alert.innerHTML = `
-       <div class="massage">
-        <p>${message_alert}</p>
-      </div>
-    </div>    `;
+    <p style=" background-color: aqua;">کتاب موجود نیست</p>
+    `;
         document.body.appendChild(alert);
         setTimeout(() => alert.remove(), 2000);
         return;
@@ -453,47 +423,4 @@ function renderBooks(data) {
     localStorage.clear();
     document.cookie = `JWT=; path=/`;
   });
-}
-function search_click() {
-  document.getElementById("submit_search").addEventListener("click", (e) => {
-    const value_search = document.getElementById("text-search").value.trim();
-    const available = document.getElementById("available_search").checked;
-    const unavailable = document.getElementById("unavailable_search").checked;
-    search(value_search, available, unavailable);
-  });
-}
-function search(value_search, available, unavailable) {
-  const cachedBooks = cache.get("books");
-  const books = cachedBooks || [];
-
-  let filtered = books;
-  if (value_search) {
-    filtered = filtered.filter((book) =>
-      book.title.toLowerCase().includes(value_search.toLowerCase())
-    );
-  }
-
-  if (available && !unavailable) {
-    filtered = filtered.filter((book) => book.availableCopies > 0);
-  }
-
-  if (unavailable && !available) {
-    filtered = filtered.filter((book) => book.availableCopies == 0);
-  }
-
-  if (filtered.length > 0) {
-    renderBooks(filtered);
-  } else {
-    loadBooks();
-    const alert = document.createElement("div");
-    alert.classList.add("alert");
-    message_alert = "کتابی پیدا نشد";
-    alert.innerHTML = `
-       <div class="massage">
-        <p>${message_alert}</p>
-      </div>
-    </div>    `;
-    document.body.appendChild(alert);
-    setTimeout(() => alert.remove(), 2000);
-  }
 }

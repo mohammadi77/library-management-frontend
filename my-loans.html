@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>My Loans - Library Management System</title>
     <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/load.css" />
+    <link rel="stylesheet" href="css/alert.css" />
   </head>
   <body>
     <header class="header">
@@ -26,6 +28,9 @@
     </header>
 
     <main class="main-content">
+      <div class="load">
+        <div class="loader"></div>
+      </div>
       <div class="container">
         <h1>My Loans</h1>
         <p style="color: #666; margin-bottom: 2rem">
@@ -33,7 +38,7 @@
         </p>
 
         <!-- Loans Table -->
-        <div class="card">
+        <div class="card" style="width: fit-content">
           <div class="card-header">
             <h2 class="card-title">Your Loans</h2>
             <span style="color: #666"
